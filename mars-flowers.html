@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mars Cosmetics — Flower Delivery</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --blush: #E8D5C4;
+    --dusty-rose: #C4896F;
+    --deep-rose: #8B4A3C;
+    --forest: #3A4A3A;
+    --sage: #7A8C72;
+    --gold: #C9A96E;
+    --charcoal: #2A2A2A;
+    --white: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(196,137,111,0.15);
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 600; letter-spacing: 0.12em;
+    color: var(--deep-rose); text-decoration: none; text-transform: uppercase;
+  }
+
+  .nav-logo span { color: var(--gold); }
+
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-size: 13px; font-weight: 400; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--forest); text-decoration: none;
+    opacity: 0.8; transition: opacity 0.2s, color 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--dusty-rose); }
+
+  .nav-actions { display: flex; align-items: center; gap: 20px; }
+  .cart-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--deep-rose); color: white;
+    padding: 9px 22px; border-radius: 40px;
+    font-size: 13px; letter-spacing: 0.06em;
+    border: none; cursor: pointer; transition: background 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .cart-btn:hover { background: var(--dusty-rose); }
+  .cart-count {
+    background: var(--gold); color: var(--deep-rose);
+    width: 18px; height: 18px; border-radius: 50%;
+    font-size: 11px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+    overflow: hidden;
+  }
+
+  .hero-text {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px 64px 80px 80px;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--dusty-rose); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block; width: 32px; height: 1px;
+    background: var(--dusty-rose);
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 6vw, 82px);
+    font-weight: 300; line-height: 1.08;
+    color: var(--forest); margin-bottom: 28px;
+  }
+
+  .hero-title em {
+    font-style: italic; color: var(--dusty-rose);
+  }
+
+  .hero-sub {
+    font-size: 15px; font-weight: 300; line-height: 1.75;
+    color: var(--charcoal); opacity: 0.65;
+    max-width: 380px; margin-bottom: 44px;
+  }
+
+  .hero-ctas { display: flex; align-items: center; gap: 20px; }
+
+  .btn-primary {
+    background: var(--forest); color: var(--cream);
+    padding: 14px 36px; border-radius: 40px;
+    font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+    border: none; cursor: pointer; text-decoration: none;
+    transition: background 0.25s, transform 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--deep-rose); transform: translateY(-1px); }
+
+  .btn-ghost {
+    font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--forest); text-decoration: none; opacity: 0.65;
+    display: flex; align-items: center; gap: 8px;
+    transition: opacity 0.2s;
+  }
+  .btn-ghost:hover { opacity: 1; }
+  .btn-ghost::after { content: '→'; }
+
+  .hero-visual {
+    position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #E8D5C4 0%, #D4A896 40%, #C4896F 100%);
+  }
+
+  .hero-visual::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 60% 40%, rgba(255,255,255,0.18) 0%, transparent 70%);
+  }
+
+  .hero-flower-grid {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .hero-flower-emoji {
+    font-size: 180px; opacity: 0.35;
+    animation: float 6s ease-in-out infinite;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
+  }
+
+  .hero-badge {
+    position: absolute; bottom: 48px; left: 48px;
+    background: rgba(250,247,242,0.95);
+    backdrop-filter: blur(8px);
+    padding: 16px 24px; border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  }
+  .hero-badge-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px; font-weight: 600; color: var(--deep-rose);
+  }
+  .hero-badge-label {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--sage); margin-top: 2px;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(-3deg); }
+    50% { transform: translateY(-18px) rotate(3deg); }
+  }
+
+  /* MARQUEE */
+  .marquee-strip {
+    background: var(--forest); overflow: hidden;
+    padding: 14px 0; white-space: nowrap;
+  }
+  .marquee-inner {
+    display: inline-block; animation: marquee 22s linear infinite;
+  }
+  .marquee-inner span {
+    font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--blush); opacity: 0.75; padding: 0 32px;
+  }
+  .marquee-inner span.dot { color: var(--gold); opacity: 1; padding: 0 8px; }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* FEATURED */
+  .section { padding: 100px 80px; }
+  .section-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 56px;
+  }
+
+  .section-label {
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--dusty-rose); margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px; font-weight: 300; color: var(--forest);
+    line-height: 1.15;
+  }
+  .section-title em { font-style: italic; color: var(--dusty-rose); }
+
+  .view-all {
+    font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--sage); text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    transition: color 0.2s; padding-bottom: 4px;
+    border-bottom: 1px solid var(--sage);
+  }
+  .view-all:hover { color: var(--dusty-rose); border-color: var(--dusty-rose); }
+
+  /* PRODUCT GRID */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .product-card {
+    background: white; border-radius: 20px;
+    overflow: hidden; cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+  }
+  .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+  }
+
+  .product-img {
+    height: 220px; display: flex; align-items: center; justify-content: center;
+    font-size: 80px; position: relative;
+    transition: transform 0.4s;
+  }
+  .product-card:hover .product-img { transform: scale(1.04); }
+
+  .product-tag {
+    position: absolute; top: 16px; left: 16px;
+    background: var(--cream); color: var(--deep-rose);
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .product-info { padding: 20px 22px 24px; }
+  .product-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 400; color: var(--forest);
+    margin-bottom: 6px;
+  }
+  .product-desc {
+    font-size: 12px; color: var(--charcoal); opacity: 0.5;
+    line-height: 1.6; margin-bottom: 16px;
+  }
+  .product-footer {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .product-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 600; color: var(--deep-rose);
+  }
+  .add-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--forest); color: white; border: none;
+    cursor: pointer; font-size: 18px; display: flex;
+    align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .add-btn:hover { background: var(--dusty-rose); transform: scale(1.1); }
+  .add-btn.added { background: var(--sage); }
+
+  /* CATEGORIES */
+  .categories-section {
+    background: var(--forest); padding: 100px 80px;
+  }
+  .categories-section .section-title { color: var(--cream); }
+  .categories-section .section-label { color: var(--sage); }
+
+  .category-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 20px; margin-top: 56px;
+  }
+
+  .category-card {
+    border-radius: 20px; padding: 40px 32px;
+    cursor: pointer; transition: transform 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .category-card:hover { transform: translateY(-4px); }
+  .category-card:nth-child(1) { background: #C4896F; }
+  .category-card:nth-child(2) { background: #7A8C72; }
+  .category-card:nth-child(3) { background: #C9A96E; }
+  .category-card:nth-child(4) { background: #8B4A3C; }
+  .category-card:nth-child(5) { background: #5A6B5A; }
+  .category-card:nth-child(6) { background: #A0755A; }
+
+  .category-emoji { font-size: 48px; margin-bottom: 16px; display: block; }
+  .category-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 400; color: white;
+    margin-bottom: 8px;
+  }
+  .category-count {
+    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+  }
+  .category-arrow {
+    position: absolute; bottom: 28px; right: 28px;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 16px;
+    transition: background 0.2s;
+  }
+  .category-card:hover .category-arrow { background: rgba(255,255,255,0.35); }
+
+  /* PROMISE STRIP */
+  .promise-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid rgba(196,137,111,0.2);
+    border-bottom: 1px solid rgba(196,137,111,0.2);
+  }
+  .promise-item {
+    padding: 40px 40px; border-right: 1px solid rgba(196,137,111,0.2);
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .promise-item:last-child { border-right: none; }
+  .promise-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+  .promise-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-weight: 600; color: var(--forest);
+    margin-bottom: 4px;
+  }
+  .promise-desc {
+    font-size: 12px; color: var(--charcoal); opacity: 0.55;
+    line-height: 1.6;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--charcoal); color: var(--blush);
+    padding: 80px 80px 40px;
+  }
+  .footer-top {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px; margin-bottom: 60px;
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 600; color: white;
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px;
+  }
+  .footer-logo span { color: var(--gold); }
+  .footer-desc { font-size: 13px; line-height: 1.7; opacity: 0.5; max-width: 260px; }
+  .footer-col-title {
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+  }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 10px; }
+  .footer-links a {
+    font-size: 13px; color: var(--blush); opacity: 0.55;
+    text-decoration: none; transition: opacity 0.2s;
+  }
+  .footer-links a:hover { opacity: 1; }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 28px; display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .footer-copy { font-size: 12px; opacity: 0.35; }
+
+  /* CART TOAST */
+  .toast {
+    position: fixed; bottom: 32px; right: 32px; z-index: 999;
+    background: var(--forest); color: white;
+    padding: 14px 24px; border-radius: 12px;
+    font-size: 13px; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    transform: translateY(80px); opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* FILTER TABS */
+  .filter-tabs {
+    display: flex; gap: 8px; margin-bottom: 40px; flex-wrap: wrap;
+  }
+  .filter-tab {
+    padding: 8px 20px; border-radius: 30px;
+    font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    border: 1px solid rgba(58,74,58,0.2); background: transparent;
+    color: var(--forest); cursor: pointer;
+    transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  }
+  .filter-tab.active, .filter-tab:hover {
+    background: var(--forest); color: white; border-color: var(--forest);
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Mars <span>✦</span> Cosmetics</a>
+  <ul class="nav-links">
+    <li><a href="#shop">Shop</a></li>
+    <li><a href="#collections">Collections</a></li>
+    <li><a href="#">Occasions</a></li>
+    <li><a href="#">About</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="cart-btn" onclick="openCart()">
+      🛒 Cart <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow">Free delivery over $49</div>
+    <h1 class="hero-title">
+      Where flowers<br>meet <em>artistry</em>
+    </h1>
+    <p class="hero-sub">
+      Hand-selected blooms, thoughtfully arranged and delivered fresh to your door. Every bouquet tells a story.
+    </p>
+    <div class="hero-ctas">
+      <a href="#shop" class="btn-primary">Shop Now</a>
+      <a href="#collections" class="btn-ghost">Explore Collections</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-flower-grid">
+      <span class="hero-flower-emoji">🌸</span>
+    </div>
+    <div class="hero-badge">
+      <div class="hero-badge-num">200+</div>
+      <div class="hero-badge-label">Floral varieties</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-inner">
+    <span>Same Day Delivery</span><span class="dot">✦</span>
+    <span>Sustainably Sourced</span><span class="dot">✦</span>
+    <span>Hand-Arranged Bouquets</span><span class="dot">✦</span>
+    <span>Gift Cards Available</span><span class="dot">✦</span>
+    <span>Free Delivery Over $49</span><span class="dot">✦</span>
+    <span>100% Fresh Guarantee</span><span class="dot">✦</span>
+    <span>Same Day Delivery</span><span class="dot">✦</span>
+    <span>Sustainably Sourced</span><span class="dot">✦</span>
+    <span>Hand-Arranged Bouquets</span><span class="dot">✦</span>
+    <span>Gift Cards Available</span><span class="dot">✦</span>
+    <span>Free Delivery Over $49</span><span class="dot">✦</span>
+    <span>100% Fresh Guarantee</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<!-- SHOP -->
+<section class="section" id="shop">
+  <div class="section-header">
+    <div>
+      <div class="section-label">Our Selection</div>
+      <h2 class="section-title">Fresh <em>Arrivals</em></h2>
+    </div>
+    <a href="#" class="view-all">View all flowers →</a>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="filter-tab active" onclick="filterProducts('all', this)">All</button>
+    <button class="filter-tab" onclick="filterProducts('romantic', this)">Romantic</button>
+    <button class="filter-tab" onclick="filterProducts('seasonal', this)">Seasonal</button>
+    <button class="filter-tab" onclick="filterProducts('wildflower', this)">Wildflower</button>
+    <button class="filter-tab" onclick="filterProducts('luxury', this)">Luxury</button>
+  </div>
+
+  <div class="product-grid" id="productGrid"></div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories-section" id="collections">
+  <div class="section-label">Browse by mood</div>
+  <h2 class="section-title">Shop by <em>Collection</em></h2>
+  <div class="category-grid">
+    <div class="category-card">
+      <span class="category-emoji">🌹</span>
+      <div class="category-name">Romantic</div>
+      <div class="category-count">24 arrangements</div>
+      <div class="category-arrow">→</div>
+    </div>
+    <div class="category-card">
+      <span class="category-emoji">🌻</span>
+      <div class="category-name">Sunshine</div>
+      <div class="category-count">18 arrangements</div>
+      <div class="category-arrow">→</div>
+    </div>
+    <div class="category-card">
+      <span class="category-emoji">💐</span>
+      <div class="category-name">Garden Party</div>
+      <div class="category-count">31 arrangements</div>
+      <div class="category-arrow">→</div>
+    </div>
+    <div class="category-card">
+      <span class="category-emoji">🌷</span>
+      <div class="category-name">Spring Edit</div>
+      <div class="category-count">22 arrangements</div>
+      <div class="category-arrow">→</div>
+    </div>
+    <div class="category-card">
+      <span class="category-emoji">🪻</span>
+      <div class="category-name">Wildflower</div>
+      <div class="category-count">15 arrangements</div>
+      <div class="category-arrow">→</div>
+    </div>
+    <div class="category-card">
+      <span class="category-emoji">🌺</span>
+      <div class="category-name">Tropical</div>
+      <div class="category-count">12 arrangements</div>
+      <div class="category-arrow">→</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMISE STRIP -->
+<div class="promise-strip">
+  <div class="promise-item">
+    <div class="promise-icon">🌿</div>
+    <div>
+      <div class="promise-title">Farm Fresh</div>
+      <div class="promise-desc">Direct from our partner farms, cut within 48 hours of delivery.</div>
+    </div>
+  </div>
+  <div class="promise-item">
+    <div class="promise-icon">🚚</div>
+    <div>
+      <div class="promise-title">Same Day</div>
+      <div class="promise-desc">Order before 12pm for same-day delivery to your door.</div>
+    </div>
+  </div>
+  <div class="promise-item">
+    <div class="promise-icon">✦</div>
+    <div>
+      <div class="promise-title">Freshness Guarantee</div>
+      <div class="promise-desc">Not happy? We'll replace or refund, no questions asked.</div>
+    </div>
+  </div>
+  <div class="promise-item">
+    <div class="promise-icon">🎁</div>
+    <div>
+      <div class="promise-title">Gift Wrapping</div>
+      <div class="promise-desc">Every order wrapped beautifully with a personal note.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">Mars <span>✦</span> Cosmetics</div>
+      <p class="footer-desc">Bringing beauty to your door, one bloom at a time. Sustainably sourced, artfully arranged.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <ul class="footer-links">
+        <li><a href="#">Fresh Flowers</a></li>
+        <li><a href="#">Bouquets</a></li>
+        <li><a href="#">Plants</a></li>
+        <li><a href="#">Gift Sets</a></li>
+        <li><a href="#">Subscriptions</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="#">Our Story</a></li>
+        <li><a href="#">Sustainability</a></li>
+        <li><a href="#">Press</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Help</div>
+      <ul class="footer-links">
+        <li><a href="#">Delivery Info</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Track Order</a></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Mars Cosmetics. All rights reserved.</div>
+    <div class="footer-copy">Privacy Policy · Terms of Service</div>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">🌸 Added to cart!</div>
+
+<script>
+  const products = [
+    { id:1, name:'Blush Peony', emoji:'🌸', price:38, desc:'Soft pink blooms, lush and fragrant', tag:'Romantic', category:'romantic', bg:'#FAEAE6' },
+    { id:2, name:'Golden Sunflower', emoji:'🌻', price:28, desc:'Bold, cheerful and full of warmth', tag:'Seasonal', category:'seasonal', bg:'#FEF6D8' },
+    { id:3, name:'Lavender Dream', emoji:'💜', price:32, desc:'Wild lavender and soft purple tones', tag:'Wildflower', category:'wildflower', bg:'#EDE8F5' },
+    { id:4, name:'Red Rose Eternal', emoji:'🌹', price:55, desc:'Classic long-stem red roses, 12 stems', tag:'Luxury', category:'luxury', bg:'#FAEAE8' },
+    { id:5, name:'Spring Tulips', emoji:'🌷', price:30, desc:'Mixed pastel tulips from Dutch farms', tag:'Seasonal', category:'seasonal', bg:'#F0EEFA' },
+    { id:6, name:'Wild Meadow', emoji:'🌼', price:35, desc:'Wildflowers & grasses, gathered look', tag:'Wildflower', category:'wildflower', bg:'#F5F0E0' },
+    { id:7, name:'Hibiscus Bliss', emoji:'🌺', price:42, desc:'Vibrant tropical statement blooms', tag:'Luxury', category:'luxury', bg:'#FAEAEA' },
+    { id:8, name:'Cherry Blossom', emoji:'🌸', price:48, desc:'Delicate sakura sprigs in full bloom', tag:'Romantic', category:'romantic', bg:'#FDE8EE' },
+  ];
+
+  let cart = 0;
+  let activeFilter = 'all';
+
+  function renderProducts(filter) {
+    const grid = document.getElementById('productGrid');
+    const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+    grid.innerHTML = filtered.map(p => `
+      <div class="product-card">
+        <div class="product-img" style="background:${p.bg}">
+          <span class="product-tag">${p.tag}</span>
+          ${p.emoji}
+        </div>
+        <div class="product-info">
+          <div class="product-name">${p.name}</div>
+          <div class="product-desc">${p.desc}</div>
+          <div class="product-footer">
+            <div class="product-price">$${p.price}</div>
+            <button class="add-btn" onclick="addToCart(this, '${p.name}')">+</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function filterProducts(filter, btn) {
+    activeFilter = filter;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderProducts(filter);
+  }
+
+  function addToCart(btn, name) {
+    cart++;
+    document.getElementById('cartCount').textContent = cart;
+    btn.textContent = '✓';
+    btn.classList.add('added');
+    setTimeout(() => { btn.textContent = '+'; btn.classList.remove('added'); }, 1200);
+    showToast(name);
+  }
+
+  function showToast(name) {
+    const t = document.getElementById('toast');
+    t.textContent = `🌸 ${name} added to cart!`;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function openCart() {
+    alert(`You have ${cart} item${cart !== 1 ? 's' : ''} in your cart.\n\nCheckout coming soon!`);
+  }
+
+  renderProducts('all');
+</script>
+</body>
+</html>
