@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mars Cosmetics — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --blush: #E8D5C4;
+    --dusty-rose: #C4896F;
+    --deep-rose: #8B4A3C;
+    --forest: #3A4A3A;
+    --sage: #7A8C72;
+    --gold: #C9A96E;
+    --charcoal: #2A2A2A;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: #F0EDE8; color: var(--charcoal); min-height: 100vh; }
+
+  /* LOGIN */
+  .login-screen {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: var(--forest);
+  }
+  .login-box {
+    background: var(--cream); border-radius: 24px; padding: 56px 48px;
+    width: 400px; text-align: center;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+  }
+  .login-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 600; color: var(--deep-rose);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px;
+  }
+  .login-logo span { color: var(--gold); }
+  .login-sub { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sage); margin-bottom: 36px; }
+  .login-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sage); display: block; text-align: left; margin-bottom: 8px; }
+  .login-input {
+    width: 100%; padding: 14px 18px; border: 1px solid rgba(196,137,111,0.3);
+    border-radius: 12px; font-size: 15px; font-family: 'DM Sans', sans-serif;
+    background: white; color: var(--charcoal); outline: none;
+    transition: border-color 0.2s; margin-bottom: 20px; text-align: center;
+    letter-spacing: 0.08em;
+  }
+  .login-input:focus { border-color: var(--dusty-rose); }
+  .login-btn {
+    width: 100%; background: var(--forest); color: white; border: none;
+    padding: 15px; border-radius: 40px; font-size: 13px; letter-spacing: 0.1em;
+    text-transform: uppercase; cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s;
+  }
+  .login-btn:hover { background: var(--deep-rose); }
+  .login-error { font-size: 13px; color: #C0392B; margin-top: 12px; display: none; }
+
+  /* ADMIN LAYOUT */
+  .admin-screen { display: none; }
+  .admin-screen.visible { display: block; }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--forest); padding: 16px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 600; color: white;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .topbar-logo span { color: var(--gold); }
+  .topbar-right { display: flex; align-items: center; gap: 20px; }
+  .topbar-badge {
+    background: rgba(255,255,255,0.1); color: var(--blush);
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 20px;
+  }
+  .logout-btn {
+    background: rgba(255,255,255,0.1); color: white; border: none;
+    padding: 8px 18px; border-radius: 20px; font-size: 12px;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s; letter-spacing: 0.06em;
+  }
+  .logout-btn:hover { background: rgba(255,255,255,0.2); }
+
+  /* MAIN */
+  .admin-main { padding: 40px; }
+
+  /* STATS */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 20px; margin-bottom: 40px;
+  }
+  .stat-card {
+    background: white; border-radius: 16px; padding: 24px 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+  .stat-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sage); margin-bottom: 10px; }
+  .stat-value { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 600; color: var(--forest); line-height: 1; }
+  .stat-sub { font-size: 12px; color: var(--charcoal); opacity: 0.45; margin-top: 6px; }
+
+  /* ORDERS TABLE */
+  .orders-panel { background: white; border-radius: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); overflow: hidden; }
+  .orders-header {
+    padding: 24px 32px; border-bottom: 1px solid rgba(196,137,111,0.15);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .orders-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 400; color: var(--forest); }
+  .refresh-btn {
+    background: var(--cream); border: 1px solid rgba(196,137,111,0.3);
+    color: var(--forest); padding: 8px 20px; border-radius: 20px;
+    font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s; letter-spacing: 0.06em;
+  }
+  .refresh-btn:hover { background: var(--blush); }
+
+  /* FILTER TABS */
+  .filter-bar {
+    padding: 16px 32px; border-bottom: 1px solid rgba(196,137,111,0.1);
+    display: flex; gap: 8px;
+  }
+  .ftab {
+    padding: 6px 18px; border-radius: 20px; font-size: 12px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border: 1px solid rgba(58,74,58,0.15); background: transparent;
+    color: var(--forest); cursor: pointer; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .ftab.active, .ftab:hover { background: var(--forest); color: white; border-color: var(--forest); }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: #F7F4EF; }
+  th { padding: 12px 20px; text-align: left; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sage); font-weight: 500; white-space: nowrap; }
+  td { padding: 16px 20px; font-size: 13px; border-bottom: 1px solid rgba(196,137,111,0.1); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #FDFAF6; }
+
+  .order-id { font-weight: 500; color: var(--deep-rose); font-size: 12px; }
+  .customer-name { font-weight: 500; color: var(--forest); }
+  .customer-detail { font-size: 11px; color: var(--charcoal); opacity: 0.5; margin-top: 2px; }
+  .items-list { font-size: 12px; color: var(--charcoal); opacity: 0.7; line-height: 1.6; }
+  .order-total { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--deep-rose); }
+  .order-date { font-size: 11px; color: var(--charcoal); opacity: 0.5; }
+
+  /* STATUS BADGE */
+  .status-badge {
+    display: inline-block; padding: 4px 12px; border-radius: 20px;
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    font-weight: 500;
+  }
+  .status-pending { background: #FEF6D8; color: #9A6B00; }
+  .status-processing { background: #E6F1FB; color: #185FA5; }
+  .status-delivered { background: #EAF3DE; color: #3B6D11; }
+  .status-cancelled { background: #FCEBEB; color: #A32D2D; }
+
+  /* STATUS SELECT */
+  .status-select {
+    padding: 6px 10px; border-radius: 8px; font-size: 12px;
+    border: 1px solid rgba(196,137,111,0.3); background: white;
+    color: var(--charcoal); cursor: pointer; font-family: 'DM Sans', sans-serif;
+    outline: none;
+  }
+  .status-select:focus { border-color: var(--dusty-rose); }
+
+  /* EMPTY */
+  .empty-state { text-align: center; padding: 80px 40px; color: var(--charcoal); opacity: 0.4; }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-text { font-size: 14px; }
+
+  /* MESSAGE MODAL */
+  .msg-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .msg-overlay.open { opacity: 1; pointer-events: all; }
+  .msg-box { background: var(--cream); border-radius: 20px; padding: 40px; width: 440px; position: relative; }
+  .msg-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--forest); margin-bottom: 16px; }
+  .msg-content { font-size: 14px; line-height: 1.7; color: var(--charcoal); opacity: 0.7; background: white; padding: 16px; border-radius: 12px; }
+  .msg-close { position: absolute; top: 16px; right: 20px; background: none; border: none; font-size: 20px; cursor: pointer; opacity: 0.4; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Mars <span>✦</span> Cosmetics</div>
+    <div class="login-sub">Admin Portal</div>
+    <label class="login-label">Password</label>
+    <input class="login-input" type="password" id="passwordInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')login()">
+    <button class="login-btn" onclick="login()">Enter Admin Panel</button>
+    <div class="login-error" id="loginError">Incorrect password. Please try again.</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-screen" id="adminScreen">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-logo">Mars <span>✦</span> Cosmetics</div>
+    <div class="topbar-right">
+      <div class="topbar-badge">Admin Panel</div>
+      <button class="logout-btn" onclick="logout()">Log Out</button>
+    </div>
+  </div>
+
+  <div class="admin-main">
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Orders</div>
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-sub">All time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending</div>
+        <div class="stat-value" id="statPending" style="color:var(--gold)">0</div>
+        <div class="stat-sub">Awaiting processing</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Processing</div>
+        <div class="stat-value" id="statProcessing" style="color:#185FA5">0</div>
+        <div class="stat-sub">Being prepared</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Delivered</div>
+        <div class="stat-value" id="statDelivered" style="color:#3B6D11">0</div>
+        <div class="stat-sub">Completed orders</div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="orders-panel">
+      <div class="orders-header">
+        <div class="orders-title">All Orders</div>
+        <button class="refresh-btn" onclick="loadOrders()">↻ Refresh</button>
+      </div>
+      <div class="filter-bar">
+        <button class="ftab active" onclick="filterOrders('all', this)">All</button>
+        <button class="ftab" onclick="filterOrders('pending', this)">Pending</button>
+        <button class="ftab" onclick="filterOrders('processing', this)">Processing</button>
+        <button class="ftab" onclick="filterOrders('delivered', this)">Delivered</button>
+        <button class="ftab" onclick="filterOrders('cancelled', this)">Cancelled</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Message</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">🌸</div>
+          <div class="empty-text">No orders yet. They will appear here once customers place orders.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MESSAGE MODAL -->
+<div class="msg-overlay" id="msgOverlay" onclick="closeMsg()">
+  <div class="msg-box" onclick="event.stopPropagation()">
+    <button class="msg-close" onclick="closeMsg()">✕</button>
+    <div class="msg-title">Special Message</div>
+    <div class="msg-content" id="msgContent"></div>
+  </div>
+</div>
+
+<script>
+  const ADMIN_PASSWORD = 'Invinsible1@';
+  let allOrders = [];
+  let currentFilter = 'all';
+
+  function login() {
+    const val = document.getElementById('passwordInput').value;
+    if (val === ADMIN_PASSWORD) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminScreen').classList.add('visible');
+      loadOrders();
+      setInterval(loadOrders, 15000);
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+      document.getElementById('passwordInput').value = '';
+    }
+  }
+
+  function logout() {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('adminScreen').classList.remove('visible');
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('loginError').style.display = 'none';
+  }
+
+  async function loadOrders() {
+    try {
+      const res = await fetch('/api/orders');
+      const data = await res.json();
+      allOrders = data.orders || [];
+      updateStats();
+      renderOrders(currentFilter);
+    } catch(e) {
+      console.error('Failed to load orders', e);
+    }
+  }
+
+  function updateStats() {
+    document.getElementById('statTotal').textContent = allOrders.length;
+    document.getElementById('statPending').textContent = allOrders.filter(o => o.status === 'pending').length;
+    document.getElementById('statProcessing').textContent = allOrders.filter(o => o.status === 'processing').length;
+    document.getElementById('statDelivered').textContent = allOrders.filter(o => o.status === 'delivered').length;
+  }
+
+  function renderOrders(filter) {
+    const filtered = filter === 'all' ? allOrders : allOrders.filter(o => o.status === filter);
+    const body = document.getElementById('ordersBody');
+    const empty = document.getElementById('emptyState');
+
+    if (filtered.length === 0) {
+      body.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+
+    empty.style.display = 'none';
+    body.innerHTML = [...filtered].reverse().map(order => `
+      <tr>
+        <td><div class="order-id">${order.id}</div></td>
+        <td>
+          <div class="customer-name">${order.name}</div>
+          <div class="customer-detail">${order.email}</div>
+          <div class="customer-detail">${order.phone}</div>
+          <div class="customer-detail" style="margin-top:4px;max-width:180px">${order.address}</div>
+        </td>
+        <td>
+          <div class="items-list">
+            ${order.items.map(i => `${i.emoji} ${i.name}`).join('<br>')}
+          </div>
+        </td>
+        <td><div class="order-total">$${order.total}</div></td>
+        <td>
+          ${order.message
+            ? `<button onclick="showMsg('${escapeStr(order.message)}')" style="background:var(--cream);border:1px solid rgba(196,137,111,0.3);padding:5px 12px;border-radius:8px;font-size:11px;cursor:pointer;color:var(--forest);">View 💌</button>`
+            : `<span style="opacity:0.3;font-size:12px">—</span>`
+          }
+        </td>
+        <td><div class="order-date">${formatDate(order.createdAt)}</div></td>
+        <td>
+          <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+            <span class="status-badge status-${order.status}">${order.status}</span>
+            <select class="status-select" onchange="updateStatus('${order.id}', this.value)">
+              <option value="pending" ${order.status==='pending'?'selected':''}>Pending</option>
+              <option value="processing" ${order.status==='processing'?'selected':''}>Processing</option>
+              <option value="delivered" ${order.status==='delivered'?'selected':''}>Delivered</option>
+              <option value="cancelled" ${order.status==='cancelled'?'selected':''}>Cancelled</option>
+            </select>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function filterOrders(filter, btn) {
+    currentFilter = filter;
+    document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderOrders(filter);
+  }
+
+  async function updateStatus(orderId, status) {
+    try {
+      await fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, status })
+      });
+      await loadOrders();
+    } catch(e) {
+      alert('Failed to update status. Please try again.');
+    }
+  }
+
+  function showMsg(msg) {
+    document.getElementById('msgContent').textContent = msg;
+    document.getElementById('msgOverlay').classList.add('open');
+  }
+
+  function closeMsg() {
+    document.getElementById('msgOverlay').classList.remove('open');
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+      '<br>' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function escapeStr(str) {
+    return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  }
+</script>
+</body>
+</html>
