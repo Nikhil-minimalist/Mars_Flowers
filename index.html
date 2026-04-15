@@ -616,69 +616,11 @@
 <div class="toast" id="toast">🌸 Added to cart!</div>
 
 <script>
-  const products = [
-    { id:1, name:'Blush Peony', emoji:'🌸', price:38, desc:'Soft pink blooms, lush and fragrant', tag:'Romantic', category:'romantic', bg:'#FAEAE6' },
-    { id:2, name:'Golden Sunflower', emoji:'🌻', price:28, desc:'Bold, cheerful and full of warmth', tag:'Seasonal', category:'seasonal', bg:'#FEF6D8' },
-    { id:3, name:'Lavender Dream', emoji:'💜', price:32, desc:'Wild lavender and soft purple tones', tag:'Wildflower', category:'wildflower', bg:'#EDE8F5' },
-    { id:4, name:'Red Rose Eternal', emoji:'🌹', price:55, desc:'Classic long-stem red roses, 12 stems', tag:'Luxury', category:'luxury', bg:'#FAEAE8' },
-    { id:5, name:'Spring Tulips', emoji:'🌷', price:30, desc:'Mixed pastel tulips from Dutch farms', tag:'Seasonal', category:'seasonal', bg:'#F0EEFA' },
-    { id:6, name:'Wild Meadow', emoji:'🌼', price:35, desc:'Wildflowers & grasses, gathered look', tag:'Wildflower', category:'wildflower', bg:'#F5F0E0' },
-    { id:7, name:'Hibiscus Bliss', emoji:'🌺', price:42, desc:'Vibrant tropical statement blooms', tag:'Luxury', category:'luxury', bg:'#FAEAEA' },
-    { id:8, name:'Cherry Blossom', emoji:'🌸', price:48, desc:'Delicate sakura sprigs in full bloom', tag:'Romantic', category:'romantic', bg:'#FDE8EE' },
-  ];
+  let products = [];
 
-  let cart = 0;
-  let activeFilter = 'all';
-
-  function renderProducts(filter) {
-    const grid = document.getElementById('productGrid');
-    const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
-    grid.innerHTML = filtered.map(p => `
-      <div class="product-card">
-        <div class="product-img" style="background:${p.bg}">
-          <span class="product-tag">${p.tag}</span>
-          ${p.emoji}
-        </div>
-        <div class="product-info">
-          <div class="product-name">${p.name}</div>
-          <div class="product-desc">${p.desc}</div>
-          <div class="product-footer">
-            <div class="product-price">$${p.price}</div>
-            <button class="add-btn" onclick="addToCart(this, '${p.name}')">+</button>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  function filterProducts(filter, btn) {
-    activeFilter = filter;
-    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    renderProducts(filter);
-  }
-
-  function addToCart(btn, name) {
-    cart++;
-    document.getElementById('cartCount').textContent = cart;
-    btn.textContent = '✓';
-    btn.classList.add('added');
-    setTimeout(() => { btn.textContent = '+'; btn.classList.remove('added'); }, 1200);
-    showToast(name);
-  }
-
-  function showToast(name) {
-    const t = document.getElementById('toast');
-    t.textContent = `🌸 ${name} added to cart!`;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
-  }
-
-  function openCart() {
-    alert(`You have ${cart} item${cart !== 1 ? 's' : ''} in your cart.\n\nCheckout coming soon!`);
-  }
-
-  renderProducts('all');
-</script>
-</body>
-</html>
+async function loadProducts() {
+  const res = await fetch('/api/products');
+  const data = await res.json();
+  products = data.products;
+  loadProducts();
+}
